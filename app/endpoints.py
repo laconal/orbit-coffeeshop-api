@@ -47,7 +47,10 @@ async def users_all(db: AsyncSession = Depends(get_db), _: User = Depends(admin_
 
 @router.get("/users/{userID}", response_model = UserRead,
             summary = "Get specific user (Only for admins)",
-            description = "Returns user info: id, email, firstname, lastname, role, isVerified")
+            description = '''Returns user info: id, email, firstname, lastname, role, isVerified
+            
+            If requesting user's role is Admin, can get info of any user, 
+            if user's role is User, can get only itself info''')
 async def get_user(userID: int, db: AsyncSession = Depends(get_db), _: User = Depends(admin_require)):
     result = await db.execute(select(User).filter(User.id == userID))
     user = result.scalars().first()
