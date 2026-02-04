@@ -1,5 +1,5 @@
-from sqlalchemy import Column, Integer, String, Boolean, DateTime
-from datetime import datetime
+from sqlalchemy import Column, Integer, String, Boolean, DateTime, func
+from datetime import datetime, timezone
 from app.database import Base
 
 class User(Base):
@@ -17,4 +17,4 @@ class User(Base):
     isVerified = Column(Boolean, default = False)
 
     verificationCode = Column(String, nullable = True)
-    createdAt = Column(DateTime, default = datetime.now(), nullable = False)
+    createdAt = Column(DateTime, default = lambda: datetime.now(timezone.utc), nullable = False, server_default = func.now())
