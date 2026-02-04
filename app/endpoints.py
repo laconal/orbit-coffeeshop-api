@@ -63,7 +63,7 @@ async def get_user(userID: int, db: AsyncSession = Depends(get_db), _: User = De
               summary = "Partially update user (Ony for admins)",
               description = "Partially updates user values with provided userID")
 async def update_user(userID: int, data: UserUpdate, db: AsyncSession = Depends(get_db),
-                currentUser: User = Depends(get_current_user)):
+                currentUser: User = Depends(admin_require)):
     result = await db.execute(select(User).filter(User.id == userID))
     user = result.scalars().first()
 
