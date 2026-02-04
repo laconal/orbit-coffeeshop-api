@@ -4,7 +4,6 @@ from typing import Literal
 class UserSignup(BaseModel):
     email: EmailStr
     password: str
-    role: Literal["User", "Admin"] = "User"
     firstName: str | None = None
     lastName: str | None = None
 

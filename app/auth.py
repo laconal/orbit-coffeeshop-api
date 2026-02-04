@@ -31,8 +31,7 @@ async def signup(data: UserSignup, db: AsyncSession = Depends(get_db)):
         hashedPWD=security.hash_pwd(data.password),
         firstName=data.firstName,
         lastName=data.lastName,
-        verificationCode=vCode,
-        role=data.role
+        verificationCode=vCode
     )
 
     db.add(user)

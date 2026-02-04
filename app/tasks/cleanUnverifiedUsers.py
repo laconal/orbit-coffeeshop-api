@@ -1,23 +1,26 @@
 from datetime import datetime, timedelta
-from app.database import sessionLocal
+from sqlalchemy.future import select
+from app.database import async_session
 from app.models import User
 from app.celery import celeryApp
 
 @celeryApp.task
-def delete_unverified_users():
-    db = sessionLocal()
-    try:
-        cutoff = datetime.now() - timedelta(days = 2)
-        usersToDelete = db.query(User).filter(
-            User.isVerified == False,
-            User.createdAt < cutoff).all()
-        
-        counter = 0
-        for u in usersToDelete: 
-            db.delete(u)
-            counter += 1
+async def delete_unverified_users():
+    cutoff = datetime.now() - timedelta(days = 2)
 
-        db.commit()
+    async with async_session() as db:
+        result = await db.execute(select(User).filter(
+            User.isVerified == False,
+            User.createdAt < cutoff
+        ))
+
+        usersToDelete = result.scalars().all()
+
+        counter = 0
+        for user in usersToDelete:
+            await db.delete(user)
+            coutner += 1
+
+        await db.commit()
+
         print(f"Deleted: {counter} unverified users")
-        
-    finally: db.close()
