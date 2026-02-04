@@ -63,7 +63,7 @@ async def get_user(userID: int, db: AsyncSession = Depends(get_db), _: User = De
               summary = "Partially update user (Ony for admins)",
               description = "Partially updates user values with provided userID")
 async def update_user(userID: int, data: UserUpdate, db: AsyncSession = Depends(get_db),
-                currentUser: User = Depends(admin_require)):
+                currentUser: User = Depends(get_current_user)):
     result = await db.execute(select(User).filter(User.id == userID))
     user = result.scalars().first()
 
@@ -71,6 +71,10 @@ async def update_user(userID: int, data: UserUpdate, db: AsyncSession = Depends(
     
     if currentUser.role != "Admin" and currentUser.id != user.id:
         raise HTTPException(status_code = 403, detail = "Cannot edit other users")
+
+    updateData = data.model_dump(exclude_unset = True)
+
+    if currentUser.role != "Admin": updateData.pop("role", None)
 
     for field, value in data.model_dump(exclude_unset = True).items():
         setattr(user, field, value)
