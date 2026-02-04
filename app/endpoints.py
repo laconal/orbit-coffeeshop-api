@@ -82,7 +82,7 @@ async def update_user(userID: int, data: UserUpdate, db: AsyncSession = Depends(
 @router.delete("/users/{userID}", status_code = 204,
                summary = "Delete user (Only for admins)",
                description = "Deletes user with provided userID")
-async def delete_user(userID: int, db: AsyncSession = Depends(get_db), _: User = Depends(get_current_user)):
+async def delete_user(userID: int, db: AsyncSession = Depends(get_db), _: User = Depends(admin_require)):
     result = await db.execute(select(User).filter(User.id == userID))
     user = result.scalars().first()
     
