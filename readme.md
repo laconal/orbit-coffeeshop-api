@@ -52,8 +52,8 @@ A simple FastAPI application for managing a CoffeeShop backend. This project use
 
 7. Start Celery worker and beat in separate terminals:
 
-        celery -A app.celeryApp worker --loglevel=info
-        celery -A app.celeryApp beat --loglevel=info
+        celery -A app.celery worker --loglevel=info
+        celery -A app.celery beat --loglevel=info
 
 8. Open Swagger UI
 
